@@ -13,7 +13,6 @@ from pydantic import BaseModel, ValidationError
 from strenum import StrEnum
 from typing_extensions import override
 
-from horde_sdk.ai_horde_api.exceptions import AIHordePayloadValidationError
 from horde_sdk.consts import HTTPMethod
 from horde_sdk.generic_api.apimodels import (
     APIKeyAllowedInRequestMixin,
@@ -248,6 +247,9 @@ class BaseHordeAPIClient(ABC):
                 return RequestErrorResponse(**raw_response_json)
 
             if "errors" in raw_response_json:
+                # FIXME: This is a circular import and `AIHordePayloadValidationError` doesn't belong here.
+                # This needs to be refactor so child classes can define their own error handling.
+                from horde_sdk.ai_horde_api.exceptions import AIHordePayloadValidationError # noqa: I001
                 raise AIHordePayloadValidationError(
                     raw_response_json.get("errors", ""),
                     raw_response_json.get("message", ""),
