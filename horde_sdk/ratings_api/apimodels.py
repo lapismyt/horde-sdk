@@ -12,6 +12,7 @@ from horde_sdk.generic_api.apimodels import (
     HordeRequest,
     HordeResponseBaseModel,
     RequestSpecifiesUserIDMixin,
+    ContainsMessageResponseMixin,
 )
 from horde_sdk.ratings_api.endpoints import RATING_API_BASE_URL, RATING_API_ENDPOINT_SUBPATH
 
@@ -63,6 +64,34 @@ class ImageRatingsResponse(HordeResponseBaseModel):
     @classmethod
     def get_api_model_name(cls) -> str | None:
         return _UNDEFINED_MODEL
+
+
+class RetrieveImageResponse(HordeResponseBaseModel):
+    """The representation of the full response from `/v1/rating/new`.
+
+    v1 API Model: `DatasetImagePopResponse`."""
+
+    id: uuid.UUID
+    url: str
+    dataset_id: uuid.UUID
+
+    @override
+    @classmethod
+    def get_api_model_name(cls) -> str | None:
+        return "DatasetImagePopResponse"
+
+
+class RateImageResponse(HordeResponseBaseModel, ContainsMessageResponseMixin):
+    """The representation of the full response from `/v1/rating/{image_id}`
+
+    v1 API Model: `RatePostResponse`."""
+
+    reward: int
+
+    @override
+    @classmethod
+    def get_api_model_name(cls) -> str | None:
+        return "RatePostResponse"
 
 
 class UserRatingsResponseSubRecord(BaseImageRatingRecord):
@@ -200,6 +229,63 @@ class ImageRatingsFilterableRequestBase(BaseSelectableReturnTypeRequest):
     artifacts_comparison: ImageRatingsComparisonTypes | None = None
     """The way the `artifacts` will be compared. See `ImageRatingsComparisonTypes`."""
     min_ratings: int | None
+
+
+class RetrieveImageRequest(
+    BaseRatingsAPIRequest,
+    APIKeyAllowedInRequestMixin,
+):
+    """Represents the data needed to kake a request to the `/v1/rating/new` endpoint."""
+
+    @override
+    @classmethod
+    def get_api_model_name(cls) -> str | None:
+        return None
+
+    @override
+    @classmethod
+    def get_http_method(cls) -> HTTPMethod:
+        return HTTPMethod.GET
+
+    @override
+    @classmethod
+    def get_api_endpoint_subpath(cls) -> RATING_API_ENDPOINT_SUBPATH:
+        return RATING_API_ENDPOINT_SUBPATH.v1_image_new
+
+    @override
+    @classmethod
+    def get_default_success_response_type(cls) -> type[RetrieveImageResponse]:
+        return RetrieveImageResponse
+
+
+class RateImageRequest(BaseRatingsAPIRequest, APIKeyAllowedInRequestMixin):
+    """Represents the data needed to make a request to the `/v1/rating/{image_id}` endpoint.
+
+    v1 API Model: RatePostInput"""
+
+    rating: int = Field(description="The aesthetic rating for this image.")
+    artifacts: int | None = Field(None, description="The artifacts rating for this image.")
+    image_id: uuid.UUID
+
+    @override
+    @classmethod
+    def get_api_model_name(cls) -> str | None:
+        return "RatePostInput"
+
+    @override
+    @classmethod
+    def get_http_method(cls) -> HTTPMethod:
+        return HTTPMethod.POST
+
+    @override
+    @classmethod
+    def get_api_endpoint_subpath(cls) -> RATING_API_ENDPOINT_SUBPATH:
+        return RATING_API_ENDPOINT_SUBPATH.v1_rating
+
+    @override
+    @classmethod
+    def get_default_success_response_type(cls) -> type[RateImageResponse]:
+        return RateImageResponse
 
 
 class UserValidateRequest(

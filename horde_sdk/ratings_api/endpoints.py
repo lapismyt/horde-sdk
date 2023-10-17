@@ -14,3 +14,5 @@ class RATING_API_ENDPOINT_SUBPATH(GENERIC_API_ENDPOINT_SUBPATH):
     v1_image_ratings = "/v1/image/ratings/{image_id}"
     v1_user_validate = "/v1/user/validate/{user_id}"
     v1_user_ratings = "/v1/user/ratings/"
+    v1_rating_new = "/v1/rating/new"
+    v1_rating = "/v1/rating/{image_id}"
