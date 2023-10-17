@@ -250,7 +250,7 @@ class RetrieveImageRequest(
     @override
     @classmethod
     def get_api_endpoint_subpath(cls) -> RATING_API_ENDPOINT_SUBPATH:
-        return RATING_API_ENDPOINT_SUBPATH.v1_image_new
+        return RATING_API_ENDPOINT_SUBPATH.v1_rating_new
 
     @override
     @classmethod

@@ -4,7 +4,10 @@ import asyncio
 
 import aiohttp
 
-from horde_sdk.generic_api.generic_clients import GenericAsyncHordeAPIManualClient, GenericHordeAPIManualClient
+from horde_sdk.generic_api.generic_clients import (
+    GenericAsyncHordeAPIManualClient, 
+    GenericHordeAPIManualClient
+)
 from horde_sdk.ratings_api.metadata import RatingsAPIPathFields, RatingsAPIQueryFields
 
 
